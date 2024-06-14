@@ -4,8 +4,8 @@ alias n='nvim'
 alias nf='nvim $(fzf)'
 alias drun='dotnet run'
 alias dwrun='dotnet watch run'
-alias dclean='dotnet clean'
-alias dbuild='dotnet build'
+alias dc='dotnet clean'
+alias db='dotnet build'
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
