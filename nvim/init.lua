@@ -68,11 +68,11 @@ vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.opt.cursorline = true
 
 -- [[Keymaps]]
-vim.keymap.set("n", "<C-a>", "gg<S-v>G")
-vim.keymap.set("n", "<Leader><C-w>", ":update<Return>", opts)
+vim.keymap.set("n", "<C-A>", "gg<S-v>G")
+vim.keymap.set("n", "<Leader><C-w>", ":write<Return>", opts)
 vim.keymap.set("n", "<Leader><C-q>", ":quit<Return>", opts)
 vim.keymap.set("n", "<Leader>Q", ":qa<Return>", opts)
-vim.keymap.set("n", "<Leader>W", ":qa<Return>", opts)
+vim.keymap.set("n", "<Leader>W", ":wa<Return>", opts)
 vim.keymap.set("n", "x", '"_x')
 vim.keymap.set("n", "O", "o<Esc>")
 vim.keymap.set("n", "<Leader>t", ":NvimTreeFindFile<Return>", opts)
