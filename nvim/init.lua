@@ -33,6 +33,7 @@ vim.opt.splitkeep = "cursor"
 vim.opt.mouse = ""
 vim.opt.swapfile = false
 vim.opt.showtabline = 2
+vim.opt.foldmethod = "manual"
 
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
