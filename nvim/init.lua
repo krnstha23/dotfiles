@@ -23,7 +23,7 @@ vim.opt.inccommand = "split"
 vim.opt.ignorecase = true
 vim.opt.smarttab = true
 vim.opt.breakindent = true
-vim.opt.wrap = false
+vim.opt.wrap = true
 vim.opt.backspace = { "start", "eol", "indent" }
 vim.opt.path:append({ "**" })
 vim.opt.wildignore:append({ "*/node_modules/*" })
@@ -69,7 +69,7 @@ vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.opt.cursorline = true
 
 -- [[Keymaps]]
-vim.keymap.set("n", "<C-A>", "gg<S-v>G")
+vim.keymap.set("n", "<M-a>", "gg<S-v>G")
 vim.keymap.set("n", "<Leader><C-w>", ":write<Return>", opts)
 vim.keymap.set("n", "<Leader><C-q>", ":quit<Return>", opts)
 vim.keymap.set("n", "<Leader>Q", ":qa<Return>", opts)
