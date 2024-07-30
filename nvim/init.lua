@@ -11,6 +11,7 @@ vim.opt.relativenumber = true
 
 vim.opt.shiftwidth = 4
 vim.opt.tabstop = 4
+vim.opt.softtabstop = -1
 vim.opt.title = true
 vim.opt.autoindent = true
 vim.opt.smartindent = true
@@ -70,15 +71,12 @@ vim.opt.cursorline = true
 
 -- [[Keymaps]]
 vim.keymap.set("n", "<M-a>", "gg<S-v>G")
-vim.keymap.set("n", "<Leader><C-w>", ":write<Return>", opts)
 vim.keymap.set("n", "<Leader><C-q>", ":quit<Return>", opts)
 vim.keymap.set("n", "<Leader>Q", ":qa<Return>", opts)
-vim.keymap.set("n", "<Leader>W", ":wa<Return>", opts)
 vim.keymap.set("n", "x", '"_x')
 vim.keymap.set("n", "O", "o<Esc>")
 vim.keymap.set("n", "<Leader>t", ":NvimTreeFindFile<Return>", opts)
 
-vim.opt.hlsearch = true
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 -- Increment/decrement
@@ -787,6 +785,7 @@ require("lazy").setup({
 				"vimdoc",
 				"c_sharp",
 				"css",
+				"go",
 			},
 			-- Autoinstall languages that are not installed
 			auto_install = true,
@@ -994,6 +993,41 @@ require("lazy").setup({
 	},
 
 	{
+		"okuuva/auto-save.nvim",
+		cmd = "ASToggle", -- optional for lazy loading on command
+		event = { "InsertLeave", "TextChanged" }, -- optional for lazy loading on trigger events
+		opts = {
+			{
+				enabled = true, -- start auto-save when the plugin is loaded (i.e. when your package manager loads it)
+				execution_message = {
+					enabled = true,
+					message = function() -- message to print on save
+						return ("AutoSave: saved at " .. vim.fn.strftime("%H:%M:%S"))
+					end,
+					dim = 0.18, -- dim the color of `message`
+					cleaning_interval = 1250, -- (milliseconds) automatically clean MsgArea after displaying `message`. See :h MsgArea
+				},
+				trigger_events = { -- See :h events
+					immediate_save = { "BufLeave", "FocusLost" }, -- vim events that trigger an immediate save
+					defer_save = { "InsertLeave", "TextChanged" }, -- vim events that trigger a deferred save (saves after `debounce_delay`)
+					cancel_defered_save = { "InsertEnter" }, -- vim events that cancel a pending deferred save
+				},
+				-- function that takes the buffer handle and determines whether to save the current buffer or not
+				-- return true: if buffer is ok to be saved
+				-- return false: if it's not ok to be saved
+				-- if set to `nil` then no specific condition is applied
+				condition = nil,
+				write_all_buffers = false, -- write all buffers when the current one meets `condition`
+				noautocmd = false, -- do not execute autocmds when saving
+				lockmarks = false, -- lock marks when saving, see `:h lockmarks` for more details
+				debounce_delay = 1000, -- delay after which a pending save is executed
+				-- log debug messages to 'auto-save.log' file in neovim cache directory, set to `true` to enable
+				debug = false,
+			},
+		},
+	},
+
+	{
 		"lukas-reineke/indent-blankline.nvim",
 		main = "ibl",
 		opts = {},
@@ -1023,6 +1057,10 @@ require("lazy").setup({
 
 			require("ibl").setup({ indent = { highlight = highlight } })
 		end,
+	},
+
+	{
+		"tpope/vim-surround",
 	},
 
 	-- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
