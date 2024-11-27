@@ -47,7 +47,9 @@ function in {
 }
 
 function ip() {
-  echo "sh $(grep -A 1 -i "$1" ~/ip.txt | tail -n 1)"
+  cmd=$(grep -A 1 -i "$1" ~/ip.txt | tail -n 1)
+  echo "sh $cmd"   # Optional: to show the command
+  sh "$cmd"
 }
 
 # Helpful aliases
@@ -75,6 +77,7 @@ alias  sp='scp -i ~/.ssh/id_rsa_kiran'
 alias  templ='/home/goku/go/bin/templ'
 alias tm='tmux new -s `basename $PWD`'
 alias rf='redis-cli flushall'
+alias fr= 'flutter run'
 
 # Handy change dir shortcuts
 alias ..='z ..'
