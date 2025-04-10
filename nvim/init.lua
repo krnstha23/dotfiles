@@ -51,6 +51,24 @@ vim.keymap.set("n", "O", "o<Esc>")
 vim.keymap.set("n", "<Leader>t", ":NvimTreeFindFile<Return>", opts)
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
+vim.keymap.set("i", "jk", "<Esc>", { noremap = true, silent = true })
+
+-- Normal mode mappings to move current line up/down
+vim.keymap.set("n", "H", ":m .+1<CR>==", { noremap = true, silent = true })
+vim.keymap.set("n", "L", ":m .-2<CR>==", { noremap = true, silent = true })
+
+-- Insert mode mappings
+vim.keymap.set("i", "<A-h>", "<Esc>:m .+1<CR>==gi", { noremap = true, silent = true })
+vim.keymap.set("i", "<A-l>", "<Esc>:m .-2<CR>==gi", { noremap = true, silent = true })
+
+-- Visual mode mappings
+vim.keymap.set("v", "H", ":m '>+1<CR>gv=gv", { noremap = true, silent = true })
+vim.keymap.set("v", "L", ":m '<-2<CR>gv=gv", { noremap = true, silent = true })
+
+-- Move selected line / block of text in visual mode
+vim.keymap.set("v", "H", ":m '>+1<CR>gv=gv", opts)
+vim.keymap.set("v", "L", ":m '<-2<CR>gv=gv", opts)
+
 -- Increment/decrement
 vim.keymap.set("n", "+", "<C-a>")
 vim.keymap.set("n", "-", "<C-x>")
@@ -100,11 +118,6 @@ vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower win
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 
 -- [[ Basic Autocommands ]]
---  See `:help lua-guide-autocommands`
-
--- Highlight when yanking (copying) text
---  Try it with `yap` in normal mode
---  See `:help vim.highlight.on_yank()`
 vim.api.nvim_create_autocmd("TextYankPost", {
 	desc = "Highlight when yanking (copying) text",
 	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
@@ -123,15 +136,6 @@ end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 -- [[ Configure and install plugins ]]
---
---  To check the current status of your plugins, run
---    :Lazy
---
---  You can press `?` in this menu for help. Use `:q` to close the window
---
---  To update plugins you can run
---    :Lazy update
---
 -- NOTE: Here is where you install your plugins.
 require("lazy").setup({
 	-- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
@@ -228,20 +232,6 @@ require("lazy").setup({
 					previewer = false,
 				}))
 			end, { desc = "[/] Fuzzily search in current buffer" })
-
-			-- It's also possible to pass additional configuration options.
-			--  See `:help telescope.builtin.live_grep()` for information about particular keys
-			vim.keymap.set("n", "<leader>s/", function()
-				builtin.live_grep({
-					grep_open_files = true,
-					prompt_title = "Live Grep in Open Files",
-				})
-			end, { desc = "[S]earch [/] in Open Files" })
-
-			-- Shortcut for searching your Neovim configuration files
-			vim.keymap.set("n", "<leader>sn", function()
-				builtin.find_files({ cwd = vim.fn.stdpath("config") })
-			end, { desc = "[S]earch [N]eovim files" })
 		end,
 	},
 
@@ -273,7 +263,17 @@ require("lazy").setup({
 					end
 
 					-- Jump to the definition of the word under your cursor.
-					map("<leader>d", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
+					map("<leader>d", function()
+						require("telescope.builtin").lsp_definitions({
+							jump_type = "split",
+							layout_config = {
+								vertical = {
+									preview_width = 0.6,
+									mirror = false,
+								},
+							},
+						})
+					end, "[G]oto [D]efinition")
 
 					-- Find references for the word under your cursor.
 					map("<leader>r", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
@@ -291,7 +291,7 @@ require("lazy").setup({
 					-- Fuzzy find all the symbols in your current workspace.
 					--  Similar to document symbols, except searches over your entire project.
 					map(
-						"<leader>ws",
+						"<leader>;p",
 						require("telescope.builtin").lsp_dynamic_workspace_symbols,
 						"[W]orkspace [S]ymbols"
 					)
@@ -307,10 +307,6 @@ require("lazy").setup({
 					-- Opens a popup that displays documentation about the word under your cursor
 					--  See `:help K` for why this keymap.
 					map("K", vim.lsp.buf.hover, "Hover Documentation")
-
-					-- WARN: This is not Goto Definition, this is Goto Declaration.
-					--  For example, in C this would take you to the header.
-					map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 
 					-- The following two autocommands are used to highlight references of the
 					-- word under your cursor when your cursor rests there for a little while.
@@ -869,7 +865,7 @@ require("lazy").setup({
       { "M",     mode = { "n" },           function() require("flash").treesitter() end,        desc = "Flash Treesitter" },
       { "mr",     mode = "o",               function() require("flash").remote() end,            desc = "Remote Flash" },
       { "MR",     mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-      { "<c-s>", mode = { "c" },           function() require("flash").toggle() end,            desc = "Toggle Flash Search" },
+      { "<C-s>", mode = { "c" },           function() require("flash").toggle() end,            desc = "Toggle Flash Search" },
     },
 	},
 	{
@@ -881,6 +877,7 @@ require("lazy").setup({
 		},
 		config = true,
 	},
+	{ "github/copilot.vim" },
 }, {
 	ui = {
 		-- If you are using a Nerd Font: set icons to an empty table which will use the

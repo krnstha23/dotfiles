@@ -51,6 +51,25 @@ vim.keymap.set("n", "O", "o<Esc>")
 vim.keymap.set("n", "<Leader>t", ":NvimTreeFindFile<Return>", opts)
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
+vim.api.nvim_set_keymap('i', '<C-C>', '<Esc>', { noremap = true })
+
+
+-- Normal mode mappings to move current line up/down
+vim.keymap.set("n", "J", ":m .+1<CR>==", { noremap = true, silent = true })
+vim.keymap.set("n", "K", ":m .-2<CR>==", { noremap = true, silent = true })
+
+-- Insert mode mappings
+vim.keymap.set("i", "<A-j>", "<Esc>:m .+1<CR>==gi", { noremap = true, silent = true })
+vim.keymap.set("i", "<A-k>", "<Esc>:m .-2<CR>==gi", { noremap = true, silent = true })
+
+-- Visual mode mappings
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { noremap = true, silent = true })
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { noremap = true, silent = true })
+
+-- Move selected line / block of text in visual mode
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", opts)
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", opts)
+
 -- Increment/decrement
 vim.keymap.set("n", "+", "<C-a>")
 vim.keymap.set("n", "-", "<C-x>")
