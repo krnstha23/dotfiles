@@ -42,6 +42,12 @@ vim.opt.list = true
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.opt.cursorline = true
 
+vim.filetype.add({
+	extension = {
+		cshtml = "html",
+	},
+})
+
 -- [[Keymaps]]
 vim.keymap.set("n", "<M-a>", "gg<S-v>G")
 vim.keymap.set("n", "<Leader><C-q>", ":quit<Return>", opts)
@@ -80,7 +86,7 @@ vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagn
 -- Tabs
 vim.keymap.set("n", "<Leader><tab>", ":tabnew<Return>", opts)
 vim.keymap.set("n", "<Leader><C-x>", ":tabonly<Return>", opts)
-vim.keymap.set("n", "<leader>te", ":tabedit")
+vim.keymap.set("n", "<leader>tr", ":tabedit")
 vim.keymap.set("n", "<tab>", ":tabnext<Return>", opts)
 vim.keymap.set("n", "<s-tab>", ":tabprev<Return>", opts)
 vim.keymap.set("n", "<leader>tw", ":tabclose<Return>", opts)
@@ -101,9 +107,10 @@ vim.keymap.set("n", "<C-S-l>", "<C-w>>")
 vim.keymap.set("n", "<C-S-k>", "<C-w>+")
 vim.keymap.set("n", "<C-S-j>", "<C-w>-")
 
--- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
--- or just use <C-\><C-n> to exit terminal mode
-vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+-- fold
+vim.keymap.set("n", "<leader>z", "za", { desc = "Toggle fold" })
+vim.keymap.set("n", "<leader>zo", "zR", { desc = "[Z] Open all folds" })
+vim.keymap.set("n", "<leader>zc", "zM", { desc = "[Z] Close all folds" })
 
 -- TIP: Disable arrow keys in normal mode
 vim.keymap.set("n", "<left>", '<cmd>echo "Use h to move!!"<CR>')
@@ -116,6 +123,10 @@ vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left wind
 vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
 vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
+
+-- comment keymaps
+vim.keymap.set("n", "gcc", "<Plug>(comment_toggle_linewise_current)", { desc = "Comment toggle current line" })
+vim.keymap.set("n", "gbc", "<Plug>(comment_toggle_blockwise_current)", { desc = "Comment toggle current block" })
 
 -- [[ Basic Autocommands ]]
 vim.api.nvim_create_autocmd("TextYankPost", {
@@ -162,24 +173,6 @@ require("lazy").setup({
 		event = "VimEnter", -- Sets the loading event to 'VimEnter'
 		config = function() -- This is the function that runs, AFTER loading
 			require("which-key").setup()
-
-			-- Document existing key chains
-			require("which-key").register({
-				{
-					{ "", group = "[C]ode" },
-					{ "", group = "[W]orkspace" },
-					{ "", group = "[R]ename" },
-					{ "", group = "[D]ocument" },
-					{ "", group = "[T]oggle" },
-					{ "", group = "[S]earch" },
-					{ "", group = "Git [H]unk" },
-					{ "", desc = "", hidden = true, mode = { "n", "n", "n", "n", "n", "n", "n" } },
-				},
-			})
-			-- visual mode
-			require("which-key").register({
-				{ "", desc = "<leader>h", mode = "v" },
-			})
 		end,
 	},
 
@@ -232,6 +225,10 @@ require("lazy").setup({
 					previewer = false,
 				}))
 			end, { desc = "[/] Fuzzily search in current buffer" })
+
+			vim.keymap.set("n", "<leader>sn", function()
+				builtin.find_files({ cwd = vim.fn.stdpath("config") })
+			end, { desc = "[S]earch [N]eovim files" })
 		end,
 	},
 
@@ -262,20 +259,22 @@ require("lazy").setup({
 						vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
 					end
 
-					-- Jump to the definition of the word under your cursor.
 					map("<leader>d", function()
 						require("telescope.builtin").lsp_definitions({
-							jump_type = "split",
+							jump_type = "vsplit", -- Force a single vertical split
+							layout_strategy = "vertical", -- Prevent Telescope from splitting again
 							layout_config = {
 								vertical = {
-									preview_width = 0.6,
-									mirror = false,
+									width = 0.8, -- 80% of the screen width
+									preview_height = 0.6, -- Preview takes 60% of the height
+									mirror = false, -- No mirrored preview
 								},
 							},
+							-- Optional: Override LSP handler for .NET if needed
+							reuse_win = true, -- Try reusing existing windows (prevents extra splits)
 						})
 					end, "[G]oto [D]efinition")
 
-					-- Find references for the word under your cursor.
 					map("<leader>r", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
 
 					-- Jump to the implementation of the word under your cursor.
@@ -290,11 +289,7 @@ require("lazy").setup({
 
 					-- Fuzzy find all the symbols in your current workspace.
 					--  Similar to document symbols, except searches over your entire project.
-					map(
-						"<leader>;p",
-						require("telescope.builtin").lsp_dynamic_workspace_symbols,
-						"[W]orkspace [S]ymbols"
-					)
+					map(";p", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
 
 					-- Rename the variable under your cursor.
 					--  Most Language Servers support renaming across files, etc.
@@ -414,9 +409,9 @@ require("lazy").setup({
 			formatters_by_ft = {
 				lua = { "stylua" },
 				csharp = { "cshapier" },
-				javascript = { { "prettierd", "prettier" } },
-				css = { { "prettierd", "prettier" } },
-				html = { { "prettierd", "prettier" } },
+				javascript = { "prettierd", "prettier" },
+				css = { "prettierd", "prettier" },
+				html = { "prettierd", "prettier" },
 			},
 		},
 	},
@@ -542,8 +537,7 @@ require("lazy").setup({
 		dependencies = { "nvim-lua/plenary.nvim" },
 		opts = { signs = false },
 	},
-
-	{ -- Highlight, edit, and navigate code
+	{
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
 		opts = {
@@ -565,12 +559,14 @@ require("lazy").setup({
 			auto_install = true,
 			highlight = {
 				enable = true,
-				-- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-				--  If you are experiencing weird indenting issues, add the language to
-				--  the list of additional_vim_regex_highlighting and disabled languages for indent.
-				additional_vim_regex_highlighting = { "ruby" },
+				additional_vim_regex_highlighting = { "cshtml" },
 			},
-			indent = { enable = true, disable = { "ruby" } },
+			-- Add this folding configuration
+			folding = {
+				enable = true,
+				disable = {}, -- List of languages to disable folding for
+				fold_virt_text = true, -- Show folded virtual text
+			},
 		},
 		config = function(_, opts)
 			-- [[ Configure Treesitter ]] See `:help nvim-treesitter`
@@ -579,6 +575,23 @@ require("lazy").setup({
 			require("nvim-treesitter.install").prefer_git = true
 			---@diagnostic disable-next-line: missing-fields
 			require("nvim-treesitter.configs").setup(opts)
+
+			-- Set fold settings (these are vim options, not treesitter specific)
+			vim.opt.foldmethod = "expr"
+			vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+			vim.opt.foldenable = true
+			vim.opt.foldlevelstart = 99 -- Start with all folds open
+			vim.opt.foldnestmax = 10 -- Maximum nested folds
+			vim.opt.foldminlines = 1 -- Minimum number of lines to allow folding
+
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = "cshtml",
+				callback = function()
+					vim.opt_local.foldmethod = "expr"
+					vim.opt_local.foldexpr = "nvim_treesitter#foldexpr()"
+					vim.opt_local.foldnestmax = 20 -- Razor files often need more nesting
+				end,
+			})
 		end,
 	},
 	{
@@ -859,14 +872,40 @@ require("lazy").setup({
 				},
 			},
 		},
-    -- stylua: ignore
-    keys = {
-      { "m",     mode = { "n", "x", "o" }, function() require("flash").jump() end,              desc = "Flash" },
-      { "M",     mode = { "n" },           function() require("flash").treesitter() end,        desc = "Flash Treesitter" },
-      { "mr",     mode = "o",               function() require("flash").remote() end,            desc = "Remote Flash" },
-      { "MR",     mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-      { "<C-s>", mode = { "c" },           function() require("flash").toggle() end,            desc = "Toggle Flash Search" },
-    },
+		keys = {
+			{
+				"f",
+				mode = { "n", "x", "o" },
+				function()
+					require("flash").jump()
+				end,
+				desc = "Flash",
+			},
+			{
+				"F",
+				mode = { "n" },
+				function()
+					require("flash").treesitter()
+				end,
+				desc = "Flash Treesitter",
+			},
+			{
+				"fr",
+				mode = "o",
+				function()
+					require("flash").remote()
+				end,
+				desc = "Remote Flash",
+			},
+			{
+				"FR",
+				mode = { "o", "x" },
+				function()
+					require("flash").treesitter_search()
+				end,
+				desc = "Treesitter Search",
+			},
+		},
 	},
 	{
 		"nvim-flutter/flutter-tools.nvim",
