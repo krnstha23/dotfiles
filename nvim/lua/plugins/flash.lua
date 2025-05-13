@@ -3,8 +3,31 @@ return {
 	event = "VeryLazy",
 	---@type Flash.Config
 	opts = {
+		labels = "asdfghjklqwertyuiopzxcvbnm",
+		search = {
+			mode = "fuzzy",
+		},
+		label = {
+			uppercase = false,
+			rainbow = {
+				enabled = true,
+				shade = 5,
+			},
+		},
+		highlight = {
+			backdrop = true,
+			matches = true,
+		},
+		pattern = "",
 		jump = {
 			autojump = true,
+		},
+		continue = false,
+		prompt = {
+			enabled = true,
+		},
+		remote_op = {
+			restore = true,
 		},
 		modes = {
 			char = {

@@ -6,6 +6,9 @@ if not vim.loop.fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
 -- [[ Configure and install plugins ]]
 require("lazy").setup({
 	spec = {

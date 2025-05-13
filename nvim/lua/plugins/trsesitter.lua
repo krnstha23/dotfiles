@@ -15,6 +15,7 @@ return {
 			"c_sharp",
 			"css",
 			"go",
+			"tsx",
 		},
 		-- Autoinstall languages that are not installed
 		auto_install = true,

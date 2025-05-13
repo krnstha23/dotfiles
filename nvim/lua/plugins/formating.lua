@@ -1,4 +1,4 @@
-return { -- Autoformat
+return {
 	"stevearc/conform.nvim",
 	lazy = false,
 	keys = {
@@ -15,6 +15,10 @@ return { -- Autoformat
 		notify_on_error = false,
 		format_on_save = function(bufnr)
 			local disable_filetypes = { c = true, cpp = true }
+			if disable_filetypes[vim.bo[bufnr].filetype] then
+				return false
+			end
+
 			return {
 				timeout_ms = 1000,
 				lsp_fallback = true,
@@ -22,10 +26,11 @@ return { -- Autoformat
 		end,
 		formatters_by_ft = {
 			lua = { "stylua" },
-			csharp = { "cshapier" },
+			csharp = { "csharpier" },
 			javascript = { "prettierd", "prettier" },
 			css = { "prettierd", "prettier" },
 			html = { "prettierd", "prettier" },
+			typescript = { "prettierd", "prettier" },
 		},
 	},
 }

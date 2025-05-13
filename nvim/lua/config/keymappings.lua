@@ -3,7 +3,6 @@ vim.keymap.set("n", "<Leader><C-q>", ":quit<Return>", opts)
 vim.keymap.set("n", "<Leader>Q", ":qa<Return>", opts)
 vim.keymap.set("n", "x", '"_x')
 vim.keymap.set("n", "O", "o<Esc>")
-vim.keymap.set("n", "<Leader>t", ":NvimTreeFindFile<Return>", opts)
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 vim.keymap.set("i", "jk", "<Esc>", { noremap = true, silent = true })
