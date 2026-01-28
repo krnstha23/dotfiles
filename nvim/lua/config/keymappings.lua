@@ -1,5 +1,4 @@
 vim.keymap.set("n", "<M-a>", "gg<S-v>G")
-vim.keymap.set("n", "<Leader><C-q>", ":quit<Return>", opts)
 vim.keymap.set("n", "<Leader>Q", ":qa<Return>", opts)
 vim.keymap.set("n", "x", '"_x')
 vim.keymap.set("n", "O", "o<Esc>")
@@ -32,12 +31,11 @@ vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show diagn
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
 
 -- Tabs
-vim.keymap.set("n", "<Leader><tab>", ":tabnew<Return>", opts)
-vim.keymap.set("n", "<Leader><C-x>", ":tabonly<Return>", opts)
-vim.keymap.set("n", "<leader>tr", ":tabedit")
-vim.keymap.set("n", "<tab>", ":tabnext<Return>", opts)
-vim.keymap.set("n", "<s-tab>", ":tabprev<Return>", opts)
-vim.keymap.set("n", "<leader>tw", ":tabclose<Return>", opts)
+vim.keymap.set("n", "<Leader><tab>", ":enew<Return>", opts)
+vim.keymap.set("n", "<Leader><C-x>", ":%bd|e#|bd#<CR>", opts)
+vim.keymap.set("n", "<tab>", ":bnext<Return>", opts)
+vim.keymap.set("n", "<s-tab>", ":bprev<Return>", opts)
+vim.keymap.set("n", "<Leader><C-q>", ":bd<Return>", opts)
 
 -- Split window
 vim.keymap.set("n", "ss", ":split<Return>", opts)

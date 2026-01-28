@@ -9,6 +9,8 @@ return {
 		-- Useful status updates for LSP.
 		{ "j-hui/fidget.nvim", opts = {} },
 		{ "folke/neodev.nvim", opts = {} },
+
+		"hrsh7th/cmp-nvim-lsp",
 	},
 	config = function()
 		vim.api.nvim_create_autocmd("LspAttach", {
@@ -77,12 +79,12 @@ return {
 		local ensure_installed = vim.tbl_keys(servers or {})
 		vim.list_extend(ensure_installed, {
 			"stylua", -- Used to format Lua code
-			"tsserver",
 			"eslint",
 			"html",
-			"cshtml",
+			"htmx-lsp",
 			"cssls",
 			"jsonls",
+			"gopls",
 		})
 
 		require("mason-tool-installer").setup({

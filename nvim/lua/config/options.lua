@@ -1,7 +1,6 @@
 vim.g.have_nerd_font = true
 vim.scriptencoding = "utf-8"
 vim.opt.encoding = "utf-8"
-vim.opt.fileencoding = "utf-8"
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.shiftwidth = 4
@@ -28,7 +27,7 @@ vim.opt.splitright = true
 vim.opt.splitkeep = "cursor"
 vim.opt.mouse = ""
 vim.opt.swapfile = false
-vim.opt.showtabline = 2
+vim.opt.showtabline = 0
 vim.opt.foldmethod = "manual"
 vim.opt.showmode = false
 vim.opt.clipboard = "unnamedplus"
