@@ -11,6 +11,20 @@ if [ -z "$SSH_AUTH_SOCK" ]; then
    ssh-add ~/.ssh/git 2>/dev/null
 fi
 
+case "$TERM" in
+    tmux*|screen*)
+        # Set pane title to just the filename (no path)
+        set_pane_title() {
+            printf '\033]2;%s\033\\' "$(basename "$(pwd)")"
+        }
+        precmd() { set_pane_title; }
+        ;;
+esac
+
+export EDITOR=nvim
+export PATH="$HOME/go/bin:$PATH"
+export PATH="$HOME/.npm-global/bin:$PATH"
+
 # Lines configured by zsh-newuser-install
 HISTFILE=~/.histfile
 HISTSIZE=1000
@@ -25,17 +39,17 @@ autoload -Uz compinit
 compinit
 # End of lines added by compinstall
 
-
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias  c='clear'
 alias  n='nvim'
 alias  nf='nvim $(fzf --preview="bat --color=always {}")'
+alias hf='helix .'
+alias h='helix'
 alias  dwrun='dotnet watch run'
 alias  drun='dotnet run'
 alias  db='dotnet build'
 alias  dc='dotnet clean'
-alias tm='tmux new -s `basename $PWD`'
 alias rf='redis-cli flushall'
 
 function ip() {
@@ -43,6 +57,12 @@ function ip() {
   echo "ssh $cmd"   # Optional: to show the command
   ssh "$cmd"
 }
+
+function getip() {
+  cmd=$(grep -A 1 -i "$1" ~/ip.txt | tail -n 1)
+  echo "$cmd"   # Optional: to show the command
+}
+
 
 # Handy change dir shortcuts
 alias ..='z ..'
@@ -52,11 +72,16 @@ alias .4='z ../../../..'
 alias .5='z ../../../../..'
 alias mkdir='mkdir -p'
 
-export PATH="$PATH:/home/goku/.dotnet/tools"
-
 source ~/powerlevel10k/powerlevel10k.zsh-theme
 
 eval "$(zoxide init zsh)"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Autosuggestions
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# Syntax Highlighting
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+export PATH="$HOME/.local/bin:$PATH"
