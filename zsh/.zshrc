@@ -1,3 +1,14 @@
+# Completion must run BEFORE instant prompt (compinit does I/O; instant prompt redirects it).
+autoload -Uz compinit
+compinit -d "${XDG_CACHE_HOME:-$HOME/.cache}/zcompdump"
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*:descriptions' format '%F{green}-- %d --%f'
+zstyle ':completion:*:warnings' format '%F{red}-- no matches --%f'
+zstyle ':completion:*' rehash true
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
@@ -11,19 +22,6 @@ HISTSIZE=1000
 SAVEHIST=1000
 setopt extendedglob
 bindkey -e
-
-# Completion
-autoload -Uz compinit
-compinit
-
-# Completion styling
-zstyle ':completion:*' menu select                          # Interactive menu selection
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'   # Case insensitive matching
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"     # Colored completions
-zstyle ':completion:*' group-name ''                        # Group completions by type
-zstyle ':completion:*:descriptions' format '%F{green}-- %d --%f'
-zstyle ':completion:*:warnings' format '%F{red}-- no matches --%f'
-zstyle ':completion:*' rehash true                          # Auto-detect new executables
 
 # Aliases - basic
 alias grep='grep --color=auto'
@@ -68,7 +66,8 @@ if command -v fzf &> /dev/null; then
   fi
 fi
 
-# Local-only aliases and secrets (not in repo): create ~/.zshrc.local
+# Local-only aliases and secrets (not in repo): create ~/.zshrc.local and add things like:
+#   alias ndql='psql "postgresql://user:password@host:5432/dbname?sslmode=require"'
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 
 # Powerlevel10k theme
