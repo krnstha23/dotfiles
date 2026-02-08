@@ -66,8 +66,6 @@ if command -v fzf &> /dev/null; then
   fi
 fi
 
-# Local-only aliases and secrets (not in repo): create ~/.zshrc.local and add things like:
-#   alias ndql='psql "postgresql://user:password@host:5432/dbname?sslmode=require"'
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 
 # Powerlevel10k theme
