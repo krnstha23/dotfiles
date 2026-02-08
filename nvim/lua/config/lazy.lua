@@ -9,13 +9,14 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
+-- Load options BEFORE lazy setup to avoid 'modifiable' issues
+require("config.options")
+require("config.keymappings")
+
 -- [[ Configure and install plugins ]]
 require("lazy").setup({
 	spec = {
 		-- import your plugins
-	    { import = "plugins" },
+		{ import = "plugins" },
 	},
 })
-
-require("config.options")
-require("config.keymappings")

@@ -5,6 +5,7 @@ return {
 		local conform = require("conform")
 
 		conform.setup({
+			notify_on_error = false,
 			formatters_by_ft = {
 				javascript = { "prettier" },
 				typescript = { "prettier" },
@@ -22,11 +23,17 @@ return {
 				lua = { "stylua" },
 				markdown = { "prettier" },
 			},
-			format_on_save = {
-				lsp_fallback = true,
-				async = false,
-				timeout_ms = 3000,
-			},
+			format_on_save = function(bufnr)
+				local disable_filetypes = { c = true, cpp = true }
+				if disable_filetypes[vim.bo[bufnr].filetype] then
+					return false
+				end
+				return {
+					lsp_fallback = true,
+					async = false,
+					timeout_ms = 3000,
+				}
+			end,
 		})
 
 		-- Configure individual formatters
@@ -54,9 +61,9 @@ return {
 		vim.keymap.set({ "n", "v" }, "<leader>f", function()
 			conform.format({
 				lsp_fallback = true,
-				async = false,
+				async = true,
 				timeout_ms = 3000,
 			})
-		end, { desc = " prettier Format whole file or range (in visual mode) with" })
+		end, { desc = "[F]ormat buffer or range (visual)" })
 	end,
 }

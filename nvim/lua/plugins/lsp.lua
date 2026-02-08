@@ -72,6 +72,9 @@ return {
 					},
 				},
 			},
+			-- Required for olrtg/nvim-emmet: LSP handles emmet/expandAbbreviation (wrap with abbreviation).
+			-- Without this, the request was going to htmx-lsp which doesn't implement it.
+			emmet_ls = {},
 		}
 
 		require("mason").setup()
@@ -85,6 +88,7 @@ return {
 			"cssls",
 			"jsonls",
 			"gopls",
+			"emmet-ls", -- Mason package name; required for nvim-emmet (expandAbbreviation / wrap with abbreviation)
 		})
 
 		require("mason-tool-installer").setup({
